@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: first-pod
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: nfs-test1
+            operator: In
+            values:
+            - "true"
+  containers:
+    - name: busybox1
+      image: busybox
+      command: ["sleep", "3600"]
+      volumeMounts:
+        - name: myvolume
+          mountPath: /busy1
+  volumes:
+    - name: myvolume
+      persistentVolumeClaim:
+        claimName: my-pvc
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: second-pod
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: nfs-test2
+            operator: In
+            values:
+            - "true"
+  containers:
+    - name: busybox2
+      image: busybox
+      command: ["sleep", "3600"]
+      volumeMounts:
+        - name: newvolume
+          mountPath: /busy2
+  volumes:
+    - name: newvolume
+      persistentVolumeClaim:
+        claimName: my-pvc
